@@ -7,6 +7,9 @@ const path = require('path');
 
 dotenv.config(); // .env 파일에서 환경 변수 로드
 
+const indexRouter = require('./routes');
+const userRouter = require('./routes/user');
+
 const app = express();
 app.set('port', process.env.PORT || 3000);
 
@@ -27,6 +30,13 @@ app.use(session({
     name: 'session-cookie',
 }));
 
+app.use('/',indexRouter);
+app.use('/user',userRouter);
+
+app.use((req,res,next)=>{
+    res.status(404).send('Not Found');
+});
+
 
 app.use((req, res, next) => {
     console.log('모든 요청에 다 실행됩니다.');
@@ -41,7 +51,7 @@ app.get('/', (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send(err.message);
 });
 
