@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">{{post.title}}</h2>
+      {% if user and user.user_id === post.user_id %}
+      <div>
+        <a href="/board/{{post.post_id}}/edit" class="btn btn-primary">수정</a>
+        <button onclick="confirmDelete()" class="btn btn-danger">삭제</button>
+      </div>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <small class="text-muted">
+          작성자: {{post.User.username}} | 
+          작성일: {{post.created_at|formatDate}}
+          {% if post.updated_at and post.updated_at > post.created_at %}
+          <br>수정일: {{post.updated_at|formatDate}}
+          {% endif %}
+        </small>
+      </div>
+      {% if post.image_url %}
+      <div class="mb-3">
+        <img src="{{post.image_url}}" class="img-fluid" alt="게시글 이미지">
+      </div>
+      {% endif %}
+      <p class="card-text">{{post.content}}</p>
+    </div>
+  </div>
+
+  <!-- 댓글 섹션 -->
+  <div class="mt-4">
+    <h4>댓글</h4>
+    {% if user %}
+    <form action="/board/{{post.post_id}}/comment" method="post" class="mb-4">
+      <div class="form-group">
+        <textarea class="form-control" name="content" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary mt-2">댓글 작성</button>
+    </form>
+    {% endif %}
+
+    {% if post.Comments and post.Comments.length > 0 %}
+    <div class="list-group">
+      {% for comment in post.Comments %}
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between">
+          <h6 class="mb-1">{{comment.User.username}}</h6>
+          <small class="text-muted">{{comment.created_at|formatDate}}</small>
+        </div>
+        <p class="mb-1">{{comment.content}}</p>
+        {% if user and user.user_id === comment.user_id %}
+        <form action="/board/{{post.post_id}}/comment/{{comment.comment_id}}/delete" method="post" class="mt-2">
+          <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>작성된 댓글이 없습니다.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+function confirmDelete() {
+  if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/board/{{post.post_id}}/delete';
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+</script>
+{% endblock %} 

@@ -1,22 +1,36 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-  <div class="timeline">
-    <div class="followings half">
-      <h2>팔로잉 목록</h2>
-      {% if user.Followings %}
-        {% for following in user.Followings %}
-          <div>{{following.nick}}</div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    <div class="followers half">
-      <h2>팔로워 목록</h2>
-      {% if user.Followers %}
-        {% for follower in user.Followers %}
-          <div>{{follower.nick}}</div>
-        {% endfor %}
-      {% endif %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">프로필 정보</h5>
+        <p class="card-text">
+          <strong>이메일:</strong> {{user.email}}<br>
+          <strong>사용자명:</strong> {{user.username}}<br>
+          <strong>작성한 게시글:</strong> {{postCount}}개
+        </p>
+      </div>
     </div>
   </div>
+  <div class="col-md-8">
+    <h4>작성한 게시글</h4>
+    {% if posts and posts.length > 0 %}
+    <div class="list-group">
+      {% for post in posts %}
+      <a href="/board/{{post.post_id}}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{post.title}}</h5>
+          <small>{{post.created_at}}</small>
+        </div>
+        <p class="mb-1">{{post.content}}</p>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>작성한 게시글이 없습니다.</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

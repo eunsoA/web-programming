@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">회원가입</h2>
+        <form action="/auth/join" method="post">
+          <div class="mb-3">
+            <label for="email" class="form-label">이메일</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">이름(성명)</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="username" class="form-label">ID(사용자 이름)</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label for="password-check" class="form-label">비밀번호 확인</label>
+            <input type="password" class="form-control" id="password-check" required>
+          </div>
+          <button type="submit" class="btn btn-primary">가입하기</button>
+          <a href="/" class="btn btn-secondary">취소</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  window.onload = () => {
+    if (new URL(location.href).searchParams.get('error')) {
+      alert('이미 존재하는 이메일이나 사용자 이름입니다.');
+    }
+  };
+
+  document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const password = document.getElementById('password');
+    const passwordCheck = document.getElementById('password-check');
+    if (password.value !== passwordCheck.value) {
+      alert('비밀번호가 일치하지 않습니다.');
+      password.focus();
+      return;
+    }
+    this.submit();
+  });
+</script>
+{% endblock %} 

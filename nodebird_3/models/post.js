@@ -3,30 +3,48 @@ const Sequelize = require('sequelize');
 class Post extends Sequelize.Model {
   static initiate(sequelize) {
     Post.init({
-      content: {
-        type: Sequelize.STRING(140),
+      post_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id'
+        }
+      },
+      title: {
+        type: Sequelize.STRING(255),
         allowNull: false,
       },
-      img: {
-        type: Sequelize.STRING(200),
-        allowNull: true,
+      content: {
+        type: Sequelize.TEXT,
+        allowNull: false,
       },
+      image_url: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      }
     }, {
       sequelize,
       timestamps: true,
-      underscored: false,
+      underscored: true,
       modelName: 'Post',
-      tableName: 'posts',
+      tableName: 'board',
       paranoid: false,
       charset: 'utf8mb4',
       collate: 'utf8mb4_general_ci',
     });
   }
-  
+
   static associate(db) {
-    db.Post.belongsTo(db.User);
-    db.Post.belongsToMany(db.Hashtag, {through: 'PostHashtag'});
+    db.Post.belongsTo(db.User, { foreignKey: 'user_id' });
+    db.Post.hasMany(db.Comment, { foreignKey: 'post_id' });
+    db.Post.hasMany(db.Like, { foreignKey: 'post_id' });
   }
-}
+};
 
 module.exports = Post;
